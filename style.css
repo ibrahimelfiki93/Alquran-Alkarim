@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'Uthmani';
+  src: url('/UthmanicHafs_V20.ttf') format('truetype');
+}
+
+nav .navbar-brand img {
+  width: 50px;
+}
+
+.ayah {
+  min-height: 50vh;
+}
+
+.ayah-text {
+  font-family: 'Uthmani', serif;
+  font-size: 40px;
+  font-weight: bold;
+}
