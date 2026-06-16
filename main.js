@@ -2,12 +2,9 @@ let allSurahs = [];
 let currentAyahs = [];
 let currentIndex = 0;
 let isPlaying = false;
-let repeatCount = 0;
-let maxRepeat = 1;
-// let gapBetweenAyahs = 500;
 
 // ============================
-// CDN AUDIO (HUSARY MUALLIM)
+// CDN AUDIO
 // ============================
 function getAudioUrl(surah, ayah) {
   const s = String(surah).padStart(3, "0");
@@ -17,12 +14,11 @@ function getAudioUrl(surah, ayah) {
 }
 
 // ============================
-// عناصر DOM
+// DOM
 // ============================
 const surahSelect = document.getElementById("surahSelect");
 const startAyahSelect = document.getElementById("startAyahSelect");
 const endAyahSelect = document.getElementById("endAyahSelect");
-const repeatSelect = document.getElementById("repeatSelect");
 
 const loadBtn = document.getElementById("loadAyahsBtn");
 const container = document.getElementById("ayahImagesContainer");
@@ -35,27 +31,61 @@ const playBtn = document.getElementById("playPauseBtn");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 
-// FontAwesome icons
 const playIcon = playBtn.querySelector(".fa-play");
 const pauseIcon = playBtn.querySelector(".fa-pause");
 
+// ============================
+// AUDIO STATE SYNC (الأهم)
+// ============================
+audio.addEventListener("play", () => {
+  isPlaying = true;
+  updatePlayButtonUI();
+});
+
+audio.addEventListener("pause", () => {
+  isPlaying = false;
+  updatePlayButtonUI();
+});
+
+audio.addEventListener("ended", onEnd);
+
+// ============================
+// INIT
+// ============================
 document.addEventListener("DOMContentLoaded", async () => {
   await loadSurahs();
 
-  surahSelect.addEventListener("change", handleSurah);
-  loadBtn.addEventListener("click", loadAyahs);
+  const lastSurah = localStorage.getItem("lastSurah");
+  const lastStart = localStorage.getItem("lastStart");
+  const lastEnd = localStorage.getItem("lastEnd");
+  const lastIndex = localStorage.getItem("lastIndex");
 
+  if (lastSurah) {
+    surahSelect.value = lastSurah;
+    handleSurah();
+
+    setTimeout(() => {
+      startAyahSelect.value = lastStart || 1;
+      endAyahSelect.value = lastEnd || 1;
+      currentIndex = parseInt(lastIndex) || 0;
+    }, 200);
+  }
+
+  surahSelect.addEventListener("change", () => {
+    currentIndex = 0;
+    handleSurah();
+  });
+
+  loadBtn.addEventListener("click", loadAyahs);
   playBtn.addEventListener("click", toggle);
   prevBtn.addEventListener("click", prev);
   nextBtn.addEventListener("click", next);
-
-  audio.addEventListener("ended", onEnd);
 
   updatePlayButtonUI();
 });
 
 // ============================
-// تحديث زر التشغيل
+// UI
 // ============================
 function updatePlayButtonUI() {
   if (isPlaying) {
@@ -68,7 +98,7 @@ function updatePlayButtonUI() {
 }
 
 // ============================
-// تحميل السور
+// LOAD SURAH LIST
 // ============================
 async function loadSurahs() {
   try {
@@ -79,24 +109,21 @@ async function loadSurahs() {
 
     surahSelect.innerHTML = `<option value="" disabled selected>اختر السورة</option>`;
 
-    let options = "";
-
     allSurahs.forEach((s) => {
-      options += `<option value="${s.number}">${s.number}. ${s.name}</option>`;
+      surahSelect.innerHTML += `
+        <option value="${s.number}">
+          ${s.number}. ${s.name}
+        </option>`;
     });
-
-    surahSelect.innerHTML += options;
   } catch (err) {
-    console.error("Error loading surahs:", err);
+    console.error(err);
   }
 }
 
 // ============================
-// عند اختيار سورة
+// HANDLE SURAH
 // ============================
 function handleSurah() {
-  if (!allSurahs.length) return;
-
   const surah = allSurahs.find((s) => s.number == surahSelect.value);
   if (!surah) return;
 
@@ -117,7 +144,7 @@ function handleSurah() {
 }
 
 // ============================
-// تحميل الآيات
+// LOAD AYAHs
 // ============================
 async function loadAyahs() {
   const surah = +surahSelect.value;
@@ -128,54 +155,48 @@ async function loadAyahs() {
 
   currentAyahs = [];
   currentIndex = 0;
-  repeatCount = 0;
 
   container.innerHTML = "";
   spinner.classList.remove("d-none");
 
   try {
-    for (let i = start; i <= end; i++) {
-      const textRes = await fetch(
-        `https://api.alquran.cloud/v1/ayah/${surah}:${i}/ar`,
-      );
-      const textData = await textRes.json();
+    const res = await fetch(`https://api.alquran.cloud/v1/surah/${surah}/ar`);
+    const data = await res.json();
 
-      currentAyahs.push({
-        ayah: i,
-        surah,
-        audio: getAudioUrl(surah, i),
-        text: textData.data.text,
-      });
-    }
+    currentAyahs = data.data.ayahs.slice(start - 1, end).map((ayah) => ({
+      ayah: ayah.numberInSurah,
+      surah,
+      audio: getAudioUrl(surah, ayah.numberInSurah),
+      text: ayah.text,
+    }));
 
     spinner.classList.add("d-none");
 
     playCurrent();
   } catch (err) {
-    console.error("Error loading ayahs:", err);
+    console.error(err);
     spinner.classList.add("d-none");
   }
 
-  const offcanvasEl = document.getElementById("settings");
-  const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+  bootstrap.Offcanvas.getOrCreateInstance(
+    document.getElementById("settings"),
+  ).hide();
 
-  if (offcanvas) {
-    offcanvas.hide();
-  }
+  localStorage.setItem("lastSurah", surah);
+  localStorage.setItem("lastStart", start);
+  localStorage.setItem("lastEnd", end);
+  localStorage.setItem("lastIndex", currentIndex);
 }
 
 // ============================
-// تشغيل الآية الحالية
+// PLAY CURRENT
 // ============================
 function playCurrent() {
   const item = currentAyahs[currentIndex];
   if (!item) return;
 
   audio.src = item.audio;
-  audio.play();
-
-  isPlaying = true;
-  updatePlayButtonUI();
+  audio.play().catch(() => {});
 
   info.textContent = `سورة ${
     surahSelect.options[surahSelect.selectedIndex].text
@@ -186,51 +207,36 @@ function playCurrent() {
       <p class="ayah-text">${item.text}</p>
     </div>
   `;
+
+  localStorage.setItem("lastIndex", currentIndex);
 }
 
 // ============================
-// عند انتهاء الآية
+// NEXT / PREV FLOW
 // ============================
 function onEnd() {
-  maxRepeat = parseInt(repeatSelect.value) || 1;
-
-  repeatCount++;
-
-  if (repeatCount < maxRepeat) {
-    playCurrent();
-    return;
-  }
-
-  repeatCount = 0;
   currentIndex++;
 
   if (currentIndex < currentAyahs.length) {
     playCurrent();
-  } else {
-    isPlaying = false;
-    updatePlayButtonUI();
   }
 }
 
 // ============================
-// تشغيل / إيقاف
+// PLAY / PAUSE
 // ============================
 function toggle() {
   if (!currentAyahs.length) return;
 
-  if (isPlaying) {
-    audio.pause();
-    isPlaying = false;
+  if (audio.paused) {
+    audio.play().catch(() => {});
   } else {
-    audio.play();
-    isPlaying = true;
+    audio.pause();
   }
-
-  updatePlayButtonUI();
 }
 
 // ============================
-// التالي
+// NEXT
 // ============================
 function next() {
   if (currentIndex < currentAyahs.length - 1) {
@@ -240,7 +246,7 @@ function next() {
 }
 
 // ============================
-// السابق
+// PREV
 // ============================
 function prev() {
   if (currentIndex > 0) {
@@ -249,6 +255,9 @@ function prev() {
   }
 }
 
+// ============================
+// SERVICE WORKER
+// ============================
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js");
 }
