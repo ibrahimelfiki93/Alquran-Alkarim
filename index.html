@@ -36,110 +36,6 @@
         <div class="offcanvas-body">
 
           <div class="mb-5">
-            <label class="fw-bold mb-3">السورة</label>
-            <select id="surahSelect" class="form-select border-primary"></select>
-          </div>
-
-          <div class="row mb-5">
-            <div class="col-6">
-              <label class="fw-bold mb-3">من آية</label>
-              <select id="startAyahSelect" class="form-select border-primary" disabled></select>
-            </div>
-
-            <div class="col-6">
-              <label class="fw-bold mb-3">إلى آية</label>
-              <select id="endAyahSelect" class="form-select border-primary" disabled></select>
-            </div>
-          </div>
-
-          <button id="loadAyahsBtn" class="btn btn-primary w-100">
-            تشغيل
-          </button>
-
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <div class="container py-4" style="margin-bottom:100px;">
-    <div id="quranDisplayArea" class="text-center">
-
-      <div id="loadingSpinner" class="spinner-border text-primary d-none"></div>
-
-      <div id="ayahImagesContainer" class="ayah d-flex align-items-center justify-content-center"></div>
-
-    </div>
-  </div>
-
-  <!-- Controls -->
-  <div class="fixed-bottom bg-white border-top p-3">
-    <div class="container row justify-content-center align-items-center m-auto">
-
-      <div id="currentAyahInfo" class="col-12 text-center mb-4">--</div>
-
-      <div class="col-12 text-center d-flex align-items-center justify-content-evenly">
-        <button id="prevBtn" class="btn btn-outline-secondary">
-          <i class="fa-solid fa-backward-fast fa-flip-horizontal"></i>
-        </button>
-
-        <button id="playPauseBtn" class="btn btn-primary mx-3">
-          <i class="fa-solid fa-play"></i>
-          <i class="fa-solid fa-pause"></i>
-        </button>
-
-        <button id="nextBtn" class="btn btn-outline-secondary">
-          <i class="fa-solid fa-forward-fast fa-flip-horizontal"></i>
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <audio id="audioPlayer"></audio>
-
-  <script src="bootstrap.bundle.min.js"></script>
-  <script src="main.js"></script>
-
-</body>
-
-</html><!DOCTYPE html>
-<html lang="ar" dir="rtl">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="bootstrap.rtl.min.css">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="responsive.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#198754">
-
-  <title>القرآن الكريم</title>
-</head>
-
-<body>
-
-  <nav class="navbar shadow-sm">
-    <div class="container">
-      <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#settings">
-        السور
-      </button>
-
-      <a class="navbar-brand" href="#">
-        <img src="favicon.png" alt="Quran">
-      </a>
-
-      <div class="offcanvas offcanvas-start" id="settings" tabindex="-1">
-        <div class="offcanvas-header">
-          <h5>الإعدادات</h5>
-          <button class="btn-close" data-bs-dismiss="offcanvas"></button>
-        </div>
-
-        <div class="offcanvas-body">
-
-          <div class="mb-5">
             <label>السورة</label>
             <select id="surahSelect" class="form-select"></select>
           </div>
@@ -175,7 +71,6 @@
     </div>
   </div>
 
-  <!-- Controls -->
   <div class="fixed-bottom bg-white border-top p-3">
     <div class="container row justify-content-center align-items-center m-auto">
 
