@@ -19,8 +19,8 @@
 
   <nav class="navbar shadow-sm">
     <div class="container">
-      <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#settings">
-        السور
+      <button class="btn btn-primary fw-bold" type="button" data-bs-toggle="offcanvas" data-bs-target="#settings">
+        قائمة السور
       </button>
 
       <a class="navbar-brand" href="#">
@@ -29,30 +29,29 @@
 
       <div class="offcanvas offcanvas-start" id="settings" tabindex="-1">
         <div class="offcanvas-header">
-          <h5>الإعدادات</h5>
           <button class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
 
         <div class="offcanvas-body">
 
-          <div class="mb-5">
-            <label>السورة</label>
-            <select id="surahSelect" class="form-select"></select>
+          <div class="my-5">
+            <label class="fw-bold mb-3">السورة</label>
+            <select id="surahSelect" class="form-select border-primary fw-bold"></select>
           </div>
 
-          <div class="row mb-5">
+          <div class="row my-5">
             <div class="col-6">
-              <label>من آية</label>
-              <select id="startAyahSelect" class="form-select" disabled></select>
+              <label class="fw-bold mb-3">من آية</label>
+              <select id="startAyahSelect" class="form-select border-primary fw-bold" disabled></select>
             </div>
 
             <div class="col-6">
-              <label>إلى آية</label>
-              <select id="endAyahSelect" class="form-select" disabled></select>
+              <label class="fw-bold mb-3">إلى آية</label>
+              <select id="endAyahSelect" class="form-select border-primary fw-bold" disabled></select>
             </div>
           </div>
 
-          <button id="loadAyahsBtn" class="btn btn-primary w-100">
+          <button id="loadAyahsBtn" class="btn btn-primary w-100 fw-bold my-5">
             تشغيل
           </button>
 

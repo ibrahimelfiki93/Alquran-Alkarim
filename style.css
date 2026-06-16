@@ -16,3 +16,8 @@ nav .navbar-brand img {
   font-size: 40px;
   font-weight: bold;
 }
+
+nav .btn,
+nav label {
+  font-size: 25px;
+}
